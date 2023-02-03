@@ -25,6 +25,7 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           force: true
+          branch: ${{ github.ref }}
           github_token: ${{ secrets.ACCESS_TOKEN }}
           repository: ${{ secrets.ACCESS_TOKEN }}
 
