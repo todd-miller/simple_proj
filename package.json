@@ -1,0 +1,19 @@
+{
+  "name": "simple_proj",
+  "version": "1.0.0",
+  "description": "A Simple project to help test out different Ops flows",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/todd-miller/simple_proj.git"
+  },
+  "author": "Landi Industries - Argonauts",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/todd-miller/simple_proj/issues"
+  },
+  "homepage": "https://github.com/todd-miller/simple_proj#readme"
+}
