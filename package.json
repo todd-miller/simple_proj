@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/todd-miller/simple_proj/issues"
   },
-  "homepage": "https://github.com/todd-miller/simple_proj#readme"
+  "homepage": "https://github.com/todd-miller/simple_proj#readme",
+  "devDependencies": {
+    "jest": "^29.4.1"
+  }
 }
