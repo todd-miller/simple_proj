@@ -27,7 +27,7 @@ jobs:
           force: true
           branch: ${{ github.ref }}
           github_token: ${{ secrets.ACCESS_TOKEN }}
-          repository: ${{ secrets.ACCESS_TOKEN }}
+          repository: ${{ env.CLIENT_REPO }}
 
       - name: Open PR
         uses: repo-sync/pull-request@v2
