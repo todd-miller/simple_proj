@@ -1,0 +1,47 @@
+# This will eventually become a composite action 
+# that should shepherd code to and possibly from a client
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  CLIENT_REPO: 'todd-miller/simple_proj'
+  CLIENT_BRANCH: 'main'
+
+jobs:
+  courier:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+
+      - name: Push to Remote
+        uses: ad-m/github-push-action@master
+        with:
+          force: true
+          github_token: ${{ secrets.ACCESS_TOKEN }}
+          repository: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Open PR
+        uses: repo-sync/pull-request@v2
+        with:
+          github_token: ${{ secrets.ACCESS_TOKEN }}
+          destination_branch: ${{ env.CLIENT_BRANCH }}
+          destination_repository: ${{ env.CLIENT_REPO }}
+          pr_title: First PR From Landi-Argonauts
+          pr_body: |
+            # First PR From Landi-Argonauts
+            
+            - need to get other meta like:
+              - date
+              - author
+              - sem-ver
+          pr_label: 'RELEASE'
+          
