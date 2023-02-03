@@ -9,6 +9,7 @@ on:
 env:
   CLIENT_REPO: 'todd-miller/simple_proj'
   CLIENT_BRANCH: 'main'
+  SOURCE_BRANCH: lia_v0.0.1
 
 jobs:
   courier:
@@ -25,7 +26,7 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           force: true
-          branch: ${{ github.ref }}
+          branch: ${{ env.SOURCE_BRANCH }} 
           github_token: ${{ secrets.ACCESS_TOKEN }}
           repository: ${{ env.CLIENT_REPO }}
 
@@ -33,6 +34,7 @@ jobs:
         uses: repo-sync/pull-request@v2
         with:
           github_token: ${{ secrets.ACCESS_TOKEN }}
+          source_branch: ${{ env.SOURCE_BRANCH }} 
           destination_branch: ${{ env.CLIENT_BRANCH }}
           destination_repository: ${{ env.CLIENT_REPO }}
           pr_title: First PR From Landi-Argonauts
