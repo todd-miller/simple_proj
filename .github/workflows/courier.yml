@@ -10,12 +10,11 @@ env:
   CLIENT_REPO: 'todd-miller/simple_proj'
   CLIENT_BRANCH: 'main'
   SOURCE_BRANCH: lia_v0.0.1
-  LANDI_REPO: 'li-argonauts/simple_proj'
 
 jobs:
   courier:
     runs-on: ubuntu-latest
-    if: github.repository == ${{ env.LANDI_REPO }}
+    if: github.repository == 'li-argonauts/simple_proj' 
     steps:
 
       - name: checkout
