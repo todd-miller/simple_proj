@@ -14,6 +14,7 @@ env:
 jobs:
   courier:
     runs-on: ubuntu-latest
+    if: github.repository == 'li-argonauts/simple_proj' 
     steps:
 
       - name: checkout
