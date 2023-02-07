@@ -43,7 +43,7 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           force: true
-          branch: "refs/tags/${{steps.previous-tag.outputs.tag}}"
+          branch: "HEAD:refs/tags/${{steps.previous-tag.outputs.tag}}"
           github_token: ${{ secrets.ACCESS_TOKEN }}
           repository: ${{ env.CLIENT_REPO }}
 
