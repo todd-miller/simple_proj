@@ -2,9 +2,8 @@
 # that should shepherd code to and possibly from a client
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
 
 env:
   CLIENT_REPO: todd-miller/simple_proj
@@ -24,12 +23,13 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
+          ref: ${{ github.sha }}
 
       - name: Push to Remote
         uses: ad-m/github-push-action@master
         with:
           force: true
-          branch: ${{ env.LANDI_TO_CLIENT_BRANCH }} 
+          branch: ${{ github.ref }} 
           github_token: ${{ secrets.ACCESS_TOKEN }}
           repository: ${{ env.CLIENT_REPO }}
 
@@ -37,10 +37,10 @@ jobs:
         uses: repo-sync/pull-request@v2
         with:
           github_token: ${{ secrets.ACCESS_TOKEN }}
-          source_branch: ${{ env.LANDI_TO_CLIENT_BRANCH }} 
-          destination_branch: ${{ env.CLIENT_BRANCH }}
+          source_branch: ${{ github.ref }} 
+          destination_branch: ${{ github.ref }}
           destination_repository: ${{ env.CLIENT_REPO }}
-          pr_title: First PR From Landi-Argonauts
+          pr_title: Release - ${{ github.ref }} 
           pr_body: |
             # First PR From Landi-Argonauts
             
@@ -50,33 +50,33 @@ jobs:
               - sem-ver
           pr_label: 'RELEASE'
 
-  curry_to_landi:
-    runs-on: ubuntu-latest
-    if: github.repository == 'todd-miller/simple_proj' 
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-        with:
-          persist-credentials: false
-          fetch-depth: 0
+ #  curry_to_landi:
+ #    runs-on: ubuntu-latest
+ #    if: github.repository == 'todd-miller/simple_proj' 
+ #    steps:
+ #      - name: checkout
+ #        uses: actions/checkout@v2
+ #        with:
+ #          persist-credentials: false
+ #          fetch-depth: 0
 
-      - name: Push to Remote
-        uses: ad-m/github-push-action@master
-        with:
-          force: true
-          branch: ${{ env.CLIENT_TO_LANDI_BRANCH }} 
-          github_token: ${{ secrets.ACCESS_TOKEN }}
-          repository: ${{ env.LANDI_REPO }}
+ #      - name: Push to Remote
+ #        uses: ad-m/github-push-action@master
+ #        with:
+ #          force: true
+ #          branch: ${{ env.CLIENT_TO_LANDI_BRANCH }} 
+ #          github_token: ${{ secrets.ACCESS_TOKEN }}
+ #          repository: ${{ env.LANDI_REPO }}
 
-      - name: Open PR
-        uses: repo-sync/pull-request@v2
-        with:
-          github_token: ${{ secrets.ACCESS_TOKEN }}
-          source_branch: ${{ env.CLIENT_TO_LANDI_BRANCH }} 
-          destination_branch: ${{ env.LANDI_BRANCH }}
-          destination_repository: ${{ env.LANDI_REPO }}
-          pr_title: First PR From CLIENT! 
-          pr_body: |
-            # FIRST PR - from CLIENT! 
-          pr_label: 'UPDATE_WITH_MAIN'
- 
+ #      - name: Open PR
+ #        uses: repo-sync/pull-request@v2
+ #        with:
+ #          github_token: ${{ secrets.ACCESS_TOKEN }}
+ #          source_branch: ${{ env.CLIENT_TO_LANDI_BRANCH }} 
+ #          destination_branch: ${{ env.LANDI_BRANCH }}
+ #          destination_repository: ${{ env.LANDI_REPO }}
+ #          pr_title: First PR From CLIENT! 
+ #          pr_body: |
+ #            # FIRST PR - from CLIENT! 
+ #          pr_label: 'UPDATE_WITH_MAIN'
+ # 
