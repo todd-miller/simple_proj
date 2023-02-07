@@ -10,7 +10,6 @@ on:
 jobs:
   releaser:
     runs-on: ubuntu-latest
-    if: github.repository == 'li-argonauts/simple_proj' 
     steps:
       - name: Checkout 
         uses: actions/checkout@v2
