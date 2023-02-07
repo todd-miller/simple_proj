@@ -14,24 +14,24 @@ env:
   CLIENT_TO_LANDI_BRANCH: todd-miller_main 
 
 jobs:
-  curry_to_client:
+  landi-2-client:
     runs-on: ubuntu-latest
     if: github.repository == 'li-argonauts/simple_proj' 
     steps:
-      - name: checkout
+      - name: NEW - CHECKOUT 
         uses: actions/checkout@v2
         with:
           persist-credentials: false
           fetch-depth: 0
           ref: ${{ github.sha }}
       
-      - name: Get Last Tag 
+      - name: NEW - PREVIOUS TAG
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
         id: previous-tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push to Remote
+      - name: NEW - PUSH TO REMOTE 
         uses: ad-m/github-push-action@master
         with:
           force: true
@@ -39,7 +39,7 @@ jobs:
           github_token: ${{ secrets.ACCESS_TOKEN }}
           repository: ${{ env.CLIENT_REPO }}
 
-      - name: Open PR
+      - name: NEW - OPEN PR
         uses: repo-sync/pull-request@v2
         with:
           github_token: ${{ secrets.ACCESS_TOKEN }}
