@@ -10,7 +10,7 @@ env:
   CLIENT_BRANCH: main
   LANDI_REPO: li-argonauts/simple_proj
   LANDI_BRANCH: main
-  LANDI_TO_CLIENT_BRANCH: lia_release
+  LANDI_TO_CLIENT_BRANCH: release
   CLIENT_TO_LANDI_BRANCH: todd-miller_main 
 
 jobs:

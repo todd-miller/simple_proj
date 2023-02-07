@@ -3,57 +3,57 @@
 
 on:
   push:
-    branches:
-      - 'release/**'
+    tags:
+      - '*.*.*' 
 
 jobs:
   releaser:
     runs-on: ubuntu-latest
     if: github.repository == 'li-argonauts/simple_proj' 
     steps:
-      - name: Checkout Development Branch 
+      - name: Checkout 
         uses: actions/checkout@v2
-        with:
-          persist-credentials: false
-          fetch-depth: 0
-          ref: development
             
-      - name: Get Last Tag 
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-        id: previous-tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Get Last Tag 
+      #   uses: "WyriHaximus/github-action-get-previous-tag@v1"
+      #   id: previous-tag
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: RUN - Get Last Commit SHA 
-        id: commit-sha
-        run: |
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      # - name: RUN - Get Last Commit SHA 
+      #   id: commit-sha
+      #   run: |
+      #     echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
-      - name: RUN - Echo Commit SHA 
-        run: echo ${{ steps.commit-sha.outputs.sha_short }}
-      
-      - name: RUN - Gather All Commits Up Until Last Tag 
-        id: log-commits
-        run: |
-          log=$(git log ${{ steps.previous-tag.outputs.tag }}..HEAD --oneline)
-          echo "COMMIT_LOG<<EOF" >> $GITHUB_OUTPUT
-          echo "$log" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+      # - name: RUN - Echo Commit SHA 
+      #   run: echo ${{ steps.commit-sha.outputs.sha_short }}
+      # 
+      # - name: RUN - Gather All Commits Up Until Last Tag 
+      #   id: log-commits
+      #   run: |
+      #     log=$(git log ${{ steps.previous-tag.outputs.tag }}..HEAD --oneline)
+      #     echo "COMMIT_LOG<<EOF" >> $GITHUB_OUTPUT
+      #     echo "$log" >> $GITHUB_OUTPUT
+      #     echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: RUN - Echo Commit Log 
-        run: |
-          echo "${{ steps.log-commits.outputs.COMMIT_LOG }}"
+      # - name: RUN - Echo Commit Log 
+      #   run: |
+      #     echo "${{ steps.log-commits.outputs.COMMIT_LOG }}"
 
-      - name: Create Local Release
+      - name: Extract Release Notes
+        id: extract-release-notes
+        uses: ffurrer2/extract-release-notes@v1
+        
+      - name: Create Release
         uses: actions/create-release@v1
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.previous-tag.outputs.tag }}
-          release_name: ${{ steps.previous-tag.outputs.tag }}
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
           body: |
             Changes in this Release:
-              ${{ steps.log-commits.outputs.COMMIT_LOG }}
+              ${{ steps.extract-release-notes.outputs.release_notes }}
           draft: true 
 
       - name: Get next Minor Version
