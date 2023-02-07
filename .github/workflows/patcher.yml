@@ -1,5 +1,6 @@
 # This will eventually become a composite action 
 # that should shepherd code to and possibly from a client
+name: PATCHER
 
 on:
   pull_request:
