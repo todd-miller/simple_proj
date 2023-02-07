@@ -1,4 +1,5 @@
 # Used to tease out new action flows 
+name: DEBUGGER
 on: push
 
 env:

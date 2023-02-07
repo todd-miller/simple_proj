@@ -1,6 +1,8 @@
 # This will eventually become a composite action 
 # that should shepherd code to and possibly from a client
 
+name: COURIER
+
 on:
   release:
     types: [published]
@@ -41,7 +43,7 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           force: true
-          branch: ${{ env.LANDI_TO_CLIENT_BRANCH }}
+          branch: "HEAD:refs/heads/${{steps.previous-tag.outputs.tag}}"
           github_token: ${{ secrets.ACCESS_TOKEN }}
           repository: ${{ env.CLIENT_REPO }}
 
