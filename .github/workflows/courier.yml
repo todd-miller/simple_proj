@@ -30,31 +30,37 @@ jobs:
         id: previous-tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: ECHO THINGS
+        run: |
+          echo ${{github.ref}}
+          echo ${{github.sha}}
+          echo ${{steps.previous-tag.outputs.tag}}
 
       - name: NEW - PUSH TO REMOTE 
         uses: ad-m/github-push-action@master
         with:
           force: true
-          branch: ${{ steps.previous-tag.outputs.tag }} 
+          branch: ${{github.ref}}
           github_token: ${{ secrets.ACCESS_TOKEN }}
           repository: ${{ env.CLIENT_REPO }}
 
-      - name: NEW - OPEN PR
-        uses: repo-sync/pull-request@v2
-        with:
-          github_token: ${{ secrets.ACCESS_TOKEN }}
-          source_branch: ${{ steps.previous-tag.outputs.tag }}
-          destination_branch: ${{ env.CLIENT_BRANCH }}
-          destination_repository: ${{ env.CLIENT_REPO }}
-          pr_title: Release - ${{ steps.previous-tag.outputs.tag }} 
-          pr_body: |
-            # First PR From Landi-Argonauts
+#       - name: NEW - OPEN PR
+#         uses: repo-sync/pull-request@v2
+#         with:
+#           github_token: ${{ secrets.ACCESS_TOKEN }}
+#           source_branch: ${{ steps.previous-tag.outputs.tag }}
+#           destination_branch: ${{ env.CLIENT_BRANCH }}
+#           destination_repository: ${{ env.CLIENT_REPO }}
+#           pr_title: Release - ${{ steps.previous-tag.outputs.tag }} 
+#           pr_body: |
+#             # First PR From Landi-Argonauts
             
-            - need to get other meta like:
-              - date
-              - author
-              - ${{ steps.previous-tag.outputs.tag }} 
-          pr_label: 'LANDI-RELEASE'
+#             - need to get other meta like:
+#               - date
+#               - author
+#               - ${{ steps.previous-tag.outputs.tag }} 
+#           pr_label: 'LANDI-RELEASE'
 
  #  curry_to_landi:
  #    runs-on: ubuntu-latest
