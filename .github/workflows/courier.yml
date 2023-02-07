@@ -9,7 +9,7 @@ on:
 
 env:
   CLIENT_REPO: todd-miller/simple_proj
-  CLIENT_BRANCH: main
+  CLIENT_BRANCH: development 
   LANDI_REPO: li-argonauts/simple_proj
   LANDI_BRANCH: main
   LANDI_TO_CLIENT_BRANCH: release
@@ -43,7 +43,7 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           force: true
-          branch: "refs/heads/${{steps.previous-tag.outputs.tag}}"
+          branch: "refs/tags/${{steps.previous-tag.outputs.tag}}"
           github_token: ${{ secrets.ACCESS_TOKEN }}
           repository: ${{ env.CLIENT_REPO }}
 
@@ -51,7 +51,7 @@ jobs:
         uses: repo-sync/pull-request@v2
         with:
           github_token: ${{ secrets.ACCESS_TOKEN }}
-          source_branch: ${{ steps.previous-tag.outputs.tag }}
+          source_branch: "refs/tags/${{ steps.previous-tag.outputs.tag }}"
           destination_branch: ${{ env.CLIENT_BRANCH }}
           destination_repository: ${{ env.CLIENT_REPO }}
           pr_title: Release - ${{ steps.previous-tag.outputs.tag }} 
