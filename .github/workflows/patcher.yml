@@ -2,21 +2,22 @@
 # that should shepherd code to and possibly from a client
 
 on:
-  pull_request_target:
-    branches:
-      - 'release/**'
+  pull_request:
+    types:
+      - opened
 
 jobs:
-  releaser:
+  patcher:
     runs-on: ubuntu-latest
-    if: github.repository == 'li-argonauts/simple_proj' 
+    if: startsWith(github.base_ref, 'release/')
     steps:
-      - name: Checkout Development Branch 
-        uses: actions/checkout@v2
-        with:
-          persist-credentials: false
-          fetch-depth: 0
-            
+      - uses: actions/checkout@v3
+      
+      - name: Echo Base and Head Refs
+        run: |
+          echo $GITHUB_HEAD_REF
+          echo $GITHUB_BASE_REF
+
       - name: Open PR
         uses: repo-sync/pull-request@v2
         with:
