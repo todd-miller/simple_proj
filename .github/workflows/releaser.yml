@@ -54,7 +54,7 @@ jobs:
           body: |
             Changes in this Release:
               ${{ steps.log-commits.outputs.COMMIT_LOG }}
-          draft: false 
+          draft: true 
 
       - name: Get next Minor Version
         id: semvers

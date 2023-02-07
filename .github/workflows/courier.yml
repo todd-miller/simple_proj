@@ -44,7 +44,7 @@ jobs:
         with:
           github_token: ${{ secrets.ACCESS_TOKEN }}
           source_branch: ${{ github.ref }} 
-          destination_branch: release/${{ steps.previous-tag.outputs.tag }}
+          destination_branch: ${{ steps.previous-tag.outputs.tag }}
           destination_repository: ${{ env.CLIENT_REPO }}
           pr_title: Release - ${{ steps.previous-tag.outputs.tag }} 
           pr_body: |
