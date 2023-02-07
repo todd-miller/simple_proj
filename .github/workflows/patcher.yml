@@ -22,6 +22,7 @@ jobs:
         uses: repo-sync/pull-request@v2
         with:
           github_token: ${{ secrets.ACCESS_TOKEN }}
+          source_branch: ${{ github.head_ref }}
           destination_branch: development 
           pr_title: Update Development w/ Release Patch (For Release x.y.z --> x.y.z+1) 
           pr_body: |
