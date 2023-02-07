@@ -1,0 +1,69 @@
+# This will eventually become a composite action 
+# that should shepherd code to and possibly from a client
+
+on:
+  push:
+    branches:
+      - 'release/**'
+
+jobs:
+  releaser:
+    runs-on: ubuntu-latest
+    if: github.repository == 'li-argonauts/simple_proj' 
+    steps:
+      - name: checkout release
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          ref: development
+            
+      - name: Get Previous Version Tag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        id: previous-tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: RUN - get last commit SHA
+        id: commit-sha
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: RUN - check sha
+        run: echo ${{ steps.commit-sha.outputs.sha_short }}
+      
+      - name: RUN - log commits from last tag
+        id: log-commits
+        run: |
+          log=$(git log ${{ steps.previous-tag.outputs.tag }}..HEAD --oneline)
+          echo "COMMIT_LOG<<EOF" >> $GITHUB_OUTPUT
+          echo "$log" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: RUN - echo COMMIT_LOG
+        run: |
+          echo "${{ steps.log-commits.outputs.COMMIT_LOG }}"
+
+      - name: Create Local Pre-Release
+        uses: actions/create-release@v1
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.previous-tag.outputs.tag }}
+          release_name: ${{ env.VERSION }}
+          body: |
+            Changes in this Release:
+              ${{ steps.log-commits.outputs.COMMIT_LOG }}
+          draft: false
+
+      - name: Get next Minor Version
+        id: semvers
+        uses: "WyriHaximus/github-action-next-semvers@v1"
+        with:
+          version: ${{ steps.previous-tag.outputs.tag }}
+      
+      - name: Create Tag
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: ${{ steps.semvers.outputs.v_minor }}
+          commit_sha: ${{ steps.commit-sha.outputs.sha_short }}
