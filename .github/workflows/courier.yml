@@ -3,7 +3,7 @@
 
 on:
   release:
-    types: [published, released]
+    types: [published]
 
 env:
   CLIENT_REPO: todd-miller/simple_proj
@@ -43,8 +43,8 @@ jobs:
         uses: repo-sync/pull-request@v2
         with:
           github_token: ${{ secrets.ACCESS_TOKEN }}
-          source_branch: ${{ github.ref }} 
-          destination_branch: ${{ steps.previous-tag.outputs.tag }}
+          source_branch: ${{ steps.previous-tag.outputs.tag }}
+          destination_branch: ${{ env.CLIENT_BRANCH }}
           destination_repository: ${{ env.CLIENT_REPO }}
           pr_title: Release - ${{ steps.previous-tag.outputs.tag }} 
           pr_body: |
