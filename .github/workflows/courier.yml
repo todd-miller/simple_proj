@@ -33,22 +33,28 @@ jobs:
           github_token: ${{ secrets.ACCESS_TOKEN }}
           repository: ${{ env.CLIENT_REPO }}
 
+      - name: Get Last Tag 
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        id: previous-tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Open PR
         uses: repo-sync/pull-request@v2
         with:
           github_token: ${{ secrets.ACCESS_TOKEN }}
           source_branch: ${{ github.ref }} 
-          destination_branch: ${{ github.ref }}
+          destination_branch: release/${{ steps.previous-tag.outputs.tag }}
           destination_repository: ${{ env.CLIENT_REPO }}
-          pr_title: Release - ${{ github.ref }} 
+          pr_title: Release - ${{ steps.previous-tag.outputs.tag }} 
           pr_body: |
             # First PR From Landi-Argonauts
             
             - need to get other meta like:
               - date
               - author
-              - sem-ver
-          pr_label: 'RELEASE'
+              - ${{ steps.previous-tag.outputs.tag }} 
+          pr_label: 'LANDI-RELEASE'
 
  #  curry_to_landi:
  #    runs-on: ubuntu-latest
