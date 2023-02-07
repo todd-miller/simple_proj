@@ -24,20 +24,20 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
           ref: ${{ github.sha }}
-
-      - name: Push to Remote
-        uses: ad-m/github-push-action@master
-        with:
-          force: true
-          branch: ${{ github.ref }} 
-          github_token: ${{ secrets.ACCESS_TOKEN }}
-          repository: ${{ env.CLIENT_REPO }}
-
+      
       - name: Get Last Tag 
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
         id: previous-tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push to Remote
+        uses: ad-m/github-push-action@master
+        with:
+          force: true
+          branch: ${{ steps.previous-tag.outputs.tag }} 
+          github_token: ${{ secrets.ACCESS_TOKEN }}
+          repository: ${{ env.CLIENT_REPO }}
 
       - name: Open PR
         uses: repo-sync/pull-request@v2
