@@ -27,12 +27,6 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
  
-     #  - name: FIND TAGS 
-     #    id: tagger
-     #    uses: jimschubert/query-tag-action@v1
-     #    with:
-     #      include: 'v*'
-
       - name: PREVIOUS TAG
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
         id: previous-tag
@@ -45,9 +39,9 @@ jobs:
           allTags=$(git tag --sort=-committerdate)
           firstTag=$(git tag --sort=-committerdate | head -1)
           secondTag=$(git tag --sort=-committerdate | head -2 | tail -1)
-          echo "$allTags"
-          echo "$firstTag"
-          echo "$secondTag"
+          echo "${allTags}"
+          echo "${firstTag}"
+          echo "${secondTag}"
 
       - name: ECHO THINGS
         run: |
