@@ -33,12 +33,26 @@ jobs:
           tag=$(git tag --sort=-committerdate | head -1)
           prev=$(git tag --sort=-committerdate | head -2 | tail -1)
           log=$(git log ${prev}..${tag} --oneline)
+
+          tag_version=$(echo $tag | grep -o '[^-]*$')
+          tag_major=$(echo $tag_version | cut -d. -f1)
+          tag_minor=$(echo $tag_version | cut -d. -f2)
+          tag_patch=$(echo $tag_version | cut -d. -f3)
+          
+          prev_version=$(echo $prev | grep -o '[^-]*$')
+          prev_major=$(echo $prev_version | cut -d. -f1)
+          prev_minor=$(echo $prev_version | cut -d. -f2)
+          prev_patch=$(echo $prev_version | cut -d. -f3)
+
+          echo "is_patch=$(( $tag_major == $prev_major && $tag_minor == $prev_minor ))" >> $GITHUB_OUTPUT
+          echo "major=$tag_major" >> $GITHUB_OUTPUT
+          echo "minor=$tag_minor" >> $GITHUB_OUTPUT
           echo "tag=$tag" >> $GITHUB_OUTPUT
           echo "prev=$prev" >> $GITHUB_OUTPUT
           echo "log<<EOF" >> $GITHUB_OUTPUT
           echo "$log" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-
+ 
       - name: ECHO THINGS
         run: |
           echo ${{github.ref}}
