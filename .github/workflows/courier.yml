@@ -20,6 +20,19 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'li-argonauts/simple_proj' 
     steps:
+      - name: CHECKOUT - DEV
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          ref: development
+            
+      - name: Find Tag
+        id: tagger
+        uses: jimschubert/query-tag-action@v1
+        with:
+          include: 'v*'
+
       - name: CHECKOUT 
         uses: actions/checkout@v2
         with:
@@ -32,12 +45,6 @@ jobs:
         id: previous-tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Find Tag
-        id: tagger
-        uses: jimschubert/query-tag-action@v1
-        with:
-          include: 'v*'
 
       - name: CHANGE_LOG
         id: commit-log
