@@ -45,7 +45,6 @@ jobs:
           echo ${{github.sha}}
           echo ${{steps.change-log.outputs.tag}}
           echo ${{steps.change-log.outputs.prev}}
-          echo ${{steps.change-log.outputs.log}}
 
       - name: PUSH TAG TO REMOTE 
         uses: ad-m/github-push-action@master
