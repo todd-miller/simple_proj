@@ -65,7 +65,7 @@ jobs:
         if: ${{ steps.change-log.outputs.is_patch == 0 }}
         with:
           force: true
-          branch: "refs/heads/${{steps.change-log.outputs.major}}.${{steps.change-log.outputs.minor}}.x"
+          branch: "refs/heads/'release/${{steps.change-log.outputs.major}}.${{steps.change-log.outputs.minor}}.x'"
           github_token: ${{ secrets.ACCESS_TOKEN }}
 
   landi-2-client:
