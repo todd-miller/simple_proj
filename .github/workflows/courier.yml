@@ -27,35 +27,29 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
  
-      - name: PREVIOUS TAG
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-        id: previous-tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: CHANGE_LOG
-        id: commit-log
+        id: change-log 
         run: |
-          allTags=$(git tag --sort=-committerdate)
-          firstTag=$(git tag --sort=-committerdate | head -1)
-          secondTag=$(git tag --sort=-committerdate | head -2 | tail -1)
-          log=$(git log ${secondTag}..${firstTag})
-          echo "${allTags}"
-          echo "${firstTag}"
-          echo "${secondTag}"
-          echo "${log}"
+          tag=$(git tag --sort=-committerdate | head -1)
+          prev=$(git tag --sort=-committerdate | head -2 | tail -1)
+          log=$(git log ${secondTag}..${firstTag} --oneline)
+          echo "tag=${tag}" >> $GITHUB_OUTPUT
+          echo "prev=${prev}" >> $GITHUB_OUTPUT
+          echo "log=${log}" >> $GITHUB_OUTPUT
 
       - name: ECHO THINGS
         run: |
           echo ${{github.ref}}
           echo ${{github.sha}}
-          echo ${{steps.previous-tag.outputs.tag}}
+          echo ${{steps.change-log.outputs.tag}}
+          echo ${{steps.change-log.outputs.prev}}
+          echo ${{steps.change-log.outputs.log}}
 
       - name: PUSH TAG TO REMOTE 
         uses: ad-m/github-push-action@master
         with:
           force: true
-          branch: "refs/tags/${{steps.previous-tag.outputs.tag}}"
+          branch: "refs/tags/${{steps.change-log.outputs.tag}}"
           github_token: ${{ secrets.ACCESS_TOKEN }}
           repository: ${{ env.CLIENT_REPO }}
 
@@ -63,7 +57,7 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           force: true
-          branch: "refs/heads/${{steps.previous-tag.outputs.tag}}"
+          branch: "refs/heads/${{steps.change-log.outputs.tag}}"
           github_token: ${{ secrets.ACCESS_TOKEN }}
           repository: ${{ env.CLIENT_REPO }}
 
@@ -71,17 +65,17 @@ jobs:
         uses: repo-sync/pull-request@v2
         with:
           github_token: ${{ secrets.ACCESS_TOKEN }}
-          source_branch: "refs/heads/${{ steps.previous-tag.outputs.tag }}"
+          source_branch: "refs/heads/${{ steps.change-log.outputs.tag }}"
           destination_branch: ${{ env.CLIENT_BRANCH }}
           destination_repository: ${{ env.CLIENT_REPO }}
-          pr_title: Release - ${{ steps.previous-tag.outputs.tag }} 
+          pr_title: Release - ${{ steps.change-log.outputs.tag }} 
           pr_body: |
             # First PR From Landi-Argonauts
              
-             - need to get other meta like:
-              - date
-              - author
-              - ${{ steps.previous-tag.outputs.tag }} 
+            - current: ${{ steps.change-log.outputs.tag }} 
+            - prev: ${{ steps.change-log.outputs.prev}} 
+            ${{ steps.change-log.outputs.log}} 
+
           pr_label: 'LANDI-RELEASE'
 
  #  curry_to_landi:
