@@ -43,8 +43,9 @@ jobs:
           echo "$secondTag"
           echo "$log"
           echo "COMMIT_LOG<<EOF" >> $GITHUB_OUTPUT
+          echo "--------------" >> $GITHUB_OUTPUT
           echo "$log" >> $GITHUB_OUTPUT
-          echo "EOF>>" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: ECHO THINGS
         run: |
