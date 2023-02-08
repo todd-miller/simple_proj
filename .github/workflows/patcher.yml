@@ -3,62 +3,62 @@
 name: PATCHER
 
 on:
-  pull_request:
+  push:
     branches:
       - 'release/**'
-    types:
-      - closed
+  # pull_request:
+  #   branches:
+  #     - 'release/**'
+  #   types:
+  #     - closed
 
 jobs:
   patcher:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      
+     
       - name: CHANGE_LOG
         id: change-log 
         run: |
-          all_tags=$(git tag --sort=-committerdate)
-          tag=$(git tag --sort=-committerdate | head -1)
-          echo "all_tags<<EOF" >> $GITHUB_OUTPUT
-          echo "$all_tags" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-          echo "tag=$tag" >> $GITHUB_OUTPUT
+          major=$(echo "release/1.9.x" | grep -o '[^release/]*$' | cut -d. -f1)
+          minor=$(echo "release/1.9.x" | grep -o '[^release/]*$' | cut -d. -f2)
+          prev_tag=$(git tag --sort=-committerdate | grep "v${major}.${minor}.*" | head -1)
+
+          prev_patch=$(echo $prev_tag | cut -d. -f3)
+          next_patch=$(($prev_patch + 1))
+
+          echo "prev_tag=$pre_tag" >> $GITHUB_OUTPUT
+          echo "next_tag=v$major.$minor.$next_patch" >> $GITHUB_OUTPUT
 
       - name: ECHO Stuff! 
         run: |
-          echo $GITHUB_HEAD_REF
-          echo $GITHUB_BASE_REF
-          echo ${{github.ref}}
-          echo ${{github.sha}}
-          echo ${{steps.change-log.outputs.tag}}
-          echo ${{steps.change-log.outputs.all_tags}}
+          echo $GITHUB_HEAD_REF # current branch
+          echo ${{github.ref}}  # merge branch
+          echo ${{steps.change-log.outputs.prev_tag}}
+          echo ${{steps.change-log.outputs.next_tag}}
 
-      - name: Create Tag on Branch
-        run: |
-          tag=$(git tag --sort=-committerdate)
-          echo "$tag"
 
-      - name: Open PR
-        if: startsWith(github.base_ref, 'release/')
-        uses: repo-sync/pull-request@v2
-        with:
-          github_token: ${{ secrets.ACCESS_TOKEN }}
-          source_branch: ${{ github.head_ref }}
-          destination_branch: development 
-          pr_title: Update Development w/ Release Patch (For Release x.y.z --> x.y.z+1) 
-          pr_body: |
-            # Release Patch 
-            
-            need to:
-              - get release target semver
-              - patch uptick semver
-              - pr body from hotfix --> release
-              - draft a new release!
+      # - name: Open PR
+      #   if: startsWith(github.base_ref, 'release/')
+      #   uses: repo-sync/pull-request@v2
+      #   with:
+      #     github_token: ${{ secrets.ACCESS_TOKEN }}
+      #     source_branch: ${{ github.head_ref }}
+      #     destination_branch: development 
+      #     pr_title: Update Development w/ Release Patch (For Release x.y.z --> x.y.z+1) 
+      #     pr_body: |
+      #       # Release Patch 
+      #       
+      #       need to:
+      #         - get release target semver
+      #         - patch uptick semver
+      #         - pr body from hotfix --> release
+      #         - draft a new release!
 
-          pr_label: 'HOTFIX'
+      #     pr_label: 'HOTFIX'
 
 
