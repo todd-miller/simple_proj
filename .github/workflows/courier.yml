@@ -32,7 +32,7 @@ jobs:
         run: |
           tag=$(git tag --sort=-committerdate | head -1)
           prev=$(git tag --sort=-committerdate | head -2 | tail -1)
-          log=$(git log ${prev}..${tag})
+          log=$(git log ${prev}..${tag} --oneline)
           echo "tag=$tag" >> $GITHUB_OUTPUT
           echo "prev=$prev" >> $GITHUB_OUTPUT
           echo "log<<EOF" >> $GITHUB_OUTPUT
@@ -69,15 +69,15 @@ jobs:
           source_branch: "refs/heads/${{ steps.change-log.outputs.tag }}"
           destination_branch: ${{ env.CLIENT_BRANCH }}
           destination_repository: ${{ env.CLIENT_REPO }}
-          pr_title: Release - ${{ steps.change-log.outputs.tag }} 
+          pr_title: "LI Release: ${{ steps.change-log.outputs.tag }}" 
           pr_body: |
-            # First PR From Landi-Argonauts
-             
-            - current: ${{ steps.change-log.outputs.tag }} 
-            - prev: ${{ steps.change-log.outputs.prev}} 
+            # LI Release: ${{ steps.change-log.outputs.tag }} 
+            
+            Changes in this Release:
+
             ${{ steps.change-log.outputs.log}} 
 
-          pr_label: 'LANDI-RELEASE'
+          pr_label: 'LI-RELEASE'
 
  #  curry_to_landi:
  #    runs-on: ubuntu-latest
