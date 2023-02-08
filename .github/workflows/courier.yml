@@ -24,6 +24,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: development
+          persist-credentials: false
  
       - name: FIND TAGS 
         id: tagger
@@ -47,6 +48,7 @@ jobs:
           echo "$allTags"
           echo "$firstTag"
           echo "$secondTag"
+          echo "$log"
 
       - name: ECHO THINGS
         run: |
