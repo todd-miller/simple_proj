@@ -26,15 +26,11 @@ jobs:
           persist-credentials: false
           ref: ${{ github.sha }}
  
-      - name: Unshallow
-        run: git fetch --prune --unshallow 
-
       - name: Find Tag
         id: tagger
         uses: jimschubert/query-tag-action@v1
         with:
           include: 'v*'
-          skip-unshallow: true
           commit-ish: 'HEAD~'
      
       - name: PREVIOUS TAG
