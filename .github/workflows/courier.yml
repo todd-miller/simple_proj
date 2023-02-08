@@ -33,28 +33,29 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Find Tag
+        id: tagger
+        uses: jimschubert/query-tag-action@v1
+        with:
+          include: 'v*'
+
       - name: CHANGE_LOG
         id: commit-log
         run: |
-          allTags=$(git tag --sort=-committerdate)
+          allTags=$(git tag )
           firstTag=$(git tag --sort=-committerdate | head -1)
           secondTag=$(git tag --sort=-committerdate | head -2 | tail -1)
           log=$(git log ${secondTag}..${firstTag} --oneline)
           echo "$allTags"
           echo "$firstTag"
           echo "$secondTag"
-          echo "$log"
-          echo "COMMIT_LOG<<EOF" >> $GITHUB_OUTPUT
-          echo "--------------" >> $GITHUB_OUTPUT
-          echo "$log" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: ECHO THINGS
         run: |
           echo ${{github.ref}}
           echo ${{github.sha}}
           echo ${{steps.previous-tag.outputs.tag}}
-          echo ${{steps.commit-log.outputs.COMMIT_LOG}}
+          echo ${{steps.tagger.outputs.tag}}
 
       - name: PUSH TAG TO REMOTE 
         uses: ad-m/github-push-action@master
