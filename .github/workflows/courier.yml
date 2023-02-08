@@ -41,14 +41,12 @@ jobs:
       - name: CHANGE_LOG
         id: commit-log
         run: |
-          allTags=$(git tag )
+          allTags=$(git tag --sort=-committerdate)
           firstTag=$(git tag --sort=-committerdate | head -1)
           secondTag=$(git tag --sort=-committerdate | head -2 | tail -1)
-          log=$(git log $secondTag..$firstTag)
           echo "$allTags"
           echo "$firstTag"
           echo "$secondTag"
-          echo "$log"
 
       - name: ECHO THINGS
         run: |
