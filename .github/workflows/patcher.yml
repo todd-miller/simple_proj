@@ -21,11 +21,10 @@ jobs:
           echo $GITHUB_HEAD_REF
           echo $GITHUB_BASE_REF
 
-#     - name: Create Tag on Branch
-#       run: ?
-#         - Can I get the Tag at the root of the target branch?
-#
-#     - name: Create New Patch Release Draft
+      - name: Create Tag on Branch
+        run: |
+          tag=$(git tag --sort=-committerdate)
+          echo "$tag"
 
       - name: Open PR
         if: startsWith(github.base_ref, 'release/')
