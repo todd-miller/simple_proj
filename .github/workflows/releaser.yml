@@ -40,9 +40,9 @@ jobs:
           echo "log<<EOF" >> $GITHUB_OUTPUT
           echo "$log" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-          echo "is_patch=$tag_major == $prev_major && $tag_minor == $prev_minor ))" >> $GITHUB_OUTPUT
-          echo "tag_major=$tag_major" >> $GITHUB_OUTPUT
-          echo "tag_minor=$tag_minor" >> $GITHUB_OUTPUT
+          echo "is_patch=$(($tag_major == $prev_major && $tag_minor == $prev_minor ))" >> $GITHUB_OUTPUT
+          echo "major=$tag_major" >> $GITHUB_OUTPUT
+          echo "minor=$tag_minor" >> $GITHUB_OUTPUT
       
       - name: ECHO THINGS
         run: |
