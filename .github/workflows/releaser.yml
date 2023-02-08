@@ -36,7 +36,7 @@ jobs:
           prev_patch=$(echo $prev_version | cut -d. -f3)
 
           echo "tag=$tag" >> $GITHUB_OUTPUT
-          echo "not_patch=$(( $tag_major != $prev_major || $tag_minor != $prev_minor ))" >> $GITHUB_OUTPUT
+          echo "version_change=$(( $tag_major != $prev_major || $tag_minor != $prev_minor ))" >> $GITHUB_OUTPUT
           echo "prev=$prev" >> $GITHUB_OUTPUT
           echo "log<<EOF" >> $GITHUB_OUTPUT
           echo "$log" >> $GITHUB_OUTPUT
@@ -48,9 +48,10 @@ jobs:
           echo ${{github.sha}}
           echo ${{steps.change-log.outputs.tag}}
           echo ${{steps.change-log.outputs.prev}}
+          echo ${{steps.change-log.outputs.version_change}}
 
       - name: Create Release
-        if: ${{ steps.change-log.outputs.not_patch }} 
+        if: ${{ steps.change-log.outputs.version_change}} 
         uses: actions/create-release@v1
         env: 
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN}}
