@@ -4,19 +4,28 @@ name: PATCHER
 
 on:
   pull_request:
+    branches:
+      - 'release/**'
     types:
-      - opened
+      - closed
 
 jobs:
   patcher:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
     steps:
       - uses: actions/checkout@v3
       
-      - name: Echo Base and Head Refs
+      - name: ECHO Stuff! 
         run: |
           echo $GITHUB_HEAD_REF
           echo $GITHUB_BASE_REF
+
+#     - name: Create Tag on Branch
+#       run: ?
+#         - Can I get the Tag at the root of the target branch?
+#
+#     - name: Create New Patch Release Draft
 
       - name: Open PR
         if: startsWith(github.base_ref, 'release/')
