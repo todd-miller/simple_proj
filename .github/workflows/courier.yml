@@ -41,9 +41,10 @@ jobs:
           log=$(git log ${secondTag}..${firstTag} --oneline)
           echo "$firstTag"
           echo "$secondTag"
+          echo "$log"
           echo "COMMIT_LOG<<EOF" >> $GITHUB_OUTPUT
           echo "$log" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "EOF>>" >> $GITHUB_OUTPUT
 
       - name: ECHO THINGS
         run: |
