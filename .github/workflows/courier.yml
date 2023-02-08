@@ -38,9 +38,9 @@ jobs:
         run: |
           firstTag=$(git tag --sort=-committerdate | head -1)
           secondTag=$(git tag --sort=-committerdate | head -2 | tail -1)
-          log=$(git log  --pretty=format:' * %s' ${secondTag}..${firstTag} )
+          log=$(git log ${secondTag}..${firstTag} --oneline)
           echo "COMMIT_LOG<<EOF" >> $GITHUB_OUTPUT
-          echo "\n $log" >> $GITHUB_OUTPUT
+          echo "$log" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: ECHO THINGS
