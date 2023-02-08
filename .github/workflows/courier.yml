@@ -25,6 +25,7 @@ jobs:
         with:
           ref: development
           persist-credentials: false
+          fetch-depth: 0
  
      #  - name: FIND TAGS 
      #    id: tagger
