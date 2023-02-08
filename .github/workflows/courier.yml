@@ -35,9 +35,7 @@ jobs:
           log=$(git log ${prev}..${tag})
           echo "tag=${tag}" >> $GITHUB_OUTPUT
           echo "prev=${prev}" >> $GITHUB_OUTPUT
-          echo "log<<EOF" >> $GITHUB_OUTPUT
-          echo "${log}" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "log=${log}" >> $GITHUB_OUTPUT
 
       - name: ECHO THINGS
         run: |
