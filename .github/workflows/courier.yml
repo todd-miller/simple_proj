@@ -36,9 +36,8 @@ jobs:
       - name: CHANGE_LOG
         id: commit-log
         run: |
-          latestTags=($(git for-each-ref refs/tags/* --sort=-taggerdate --count=2 --format="%(refname:short)"))
-          firstTagHF=${latestTags[0]}
-          secondTagHF=${latestTags[1]}
+          firstTag=$(git tag --sort=-committerdate | head -1)
+          secondTag=$(git tag --sort=-committerdate | head -2 | tail -1)
           log=$(git log  --pretty=format:' * %s' ${secondTag}..${firstTag} )
           echo "COMMIT_LOG<<EOF" >> $GITHUB_OUTPUT
           echo "\n $log" >> $GITHUB_OUTPUT
