@@ -33,7 +33,7 @@ jobs:
         run: |
           log=$(git log ${{ steps.previous-tag.outputs.tag }}..HEAD --oneline)
           echo "COMMIT_LOG<<EOF" >> $GITHUB_OUTPUT
-          echo "$log" >> $GITHUB_OUTPUT
+          echo "${log}" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: RUN - Echo Commit Log 
