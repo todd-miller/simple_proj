@@ -13,32 +13,18 @@ jobs:
     steps:
       - name: Checkout 
         uses: actions/checkout@v2
-            
-      - name: Get Last Tag 
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-        id: previous-tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: RUN - Get Last Commit SHA 
-        id: commit-sha
+      
+      - name: CHANGE_LOG
+        id: change-log 
         run: |
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-
-      - name: RUN - Echo Commit SHA 
-        run: echo ${{ steps.commit-sha.outputs.sha_short }}
-
-      - name: RUN - Gather All Commits Up Until Last Tag 
-        id: log-commits
-        run: |
-          log=$(git log ${{ steps.previous-tag.outputs.tag }}..HEAD --oneline)
-          echo "COMMIT_LOG<<EOF" >> $GITHUB_OUTPUT
+          tag=$(git tag --sort=-committerdate | head -1)
+          prev=$(git tag --sort=-committerdate | head -2 | tail -1)
+          log=$(git log ${prev}..${tag} --oneline)
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+          echo "prev=$prev" >> $GITHUB_OUTPUT
+          echo "log<<EOF" >> $GITHUB_OUTPUT
           echo "$log" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: RUN - Echo Commit Log 
-        run: |
-          echo "${{ steps.log-commits.outputs.COMMIT_LOG }}"
 
       - name: Create Release
         uses: actions/create-release@v1
@@ -49,6 +35,6 @@ jobs:
           release_name: ${{ github.ref }}
           body: |
             Changes in this Release:
-              ${{ steps.log-commits.outputs.COMMIT_LOG}}
+              ${{ steps.change-log.outputs.log}}
           draft: true 
 
