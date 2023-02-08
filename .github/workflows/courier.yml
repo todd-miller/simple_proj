@@ -16,6 +16,58 @@ env:
   CLIENT_TO_LANDI_BRANCH: todd-miller_main 
 
 jobs:
+  landi:
+    runs-on: ubuntu-latest
+    if: github.repository == 'li-argonauts/simple_proj' 
+    steps:
+      - name: CHECKOUT 
+        uses: actions/checkout@v2
+        with:
+          ref: development
+          persist-credentials: false
+          fetch-depth: 0
+ 
+      - name: CHANGE_LOG
+        id: change-log 
+        run: |
+          tag=$(git tag --sort=-committerdate | head -1)
+          prev=$(git tag --sort=-committerdate | head -2 | tail -1)
+          log=$(git log ${prev}..${tag} --oneline)
+
+          tag_version=$(echo $tag | grep -o '[^-]*$')
+          tag_major=$(echo $tag_version | cut -d. -f1)
+          tag_minor=$(echo $tag_version | cut -d. -f2)
+          tag_patch=$(echo $tag_version | cut -d. -f3)
+          
+          prev_version=$(echo $prev | grep -o '[^-]*$')
+          prev_major=$(echo $prev_version | cut -d. -f1)
+          prev_minor=$(echo $prev_version | cut -d. -f2)
+          prev_patch=$(echo $prev_version | cut -d. -f3)
+
+          echo "is_patch=$(( $tag_major == $prev_major && $tag_minor == $prev_minor ))" >> $GITHUB_OUTPUT
+          echo "major=$tag_major" >> $GITHUB_OUTPUT
+          echo "minor=$tag_minor" >> $GITHUB_OUTPUT
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+          echo "prev=$prev" >> $GITHUB_OUTPUT
+          echo "log<<EOF" >> $GITHUB_OUTPUT
+          echo "$log" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+ 
+      - name: ECHO THINGS
+        run: |
+          echo ${{github.ref}}
+          echo ${{github.sha}}
+          echo ${{steps.change-log.outputs.tag}}
+          echo ${{steps.change-log.outputs.prev}}
+
+      - name: CREATE RELEASE BRANCH
+        uses: ad-m/github-push-action@master
+        if: ${{ steps.change-log.outputs.is_patch == 0 }}
+        with:
+          force: true
+          branch: "refs/heads/v${{steps.change-log.outputs.major}}.${{steps.change-log.outputs.minor}}.x"
+          github_token: ${{ secrets.ACCESS_TOKEN }}
+
   landi-2-client:
     runs-on: ubuntu-latest
     if: github.repository == 'li-argonauts/simple_proj' 
@@ -75,6 +127,10 @@ jobs:
           branch: "refs/heads/${{steps.change-log.outputs.tag}}"
           github_token: ${{ secrets.ACCESS_TOKEN }}
           repository: ${{ env.CLIENT_REPO }}
+
+#     CHANGES! --> PATCHES will have to get merged towards 'development' AND
+#     'release/vA.B.x'
+#     not sure how tags need 'delivered'
 
       - name: OPEN PR
         uses: repo-sync/pull-request@v2
