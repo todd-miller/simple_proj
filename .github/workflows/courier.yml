@@ -20,58 +20,64 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'li-argonauts/simple_proj' 
     steps:
-      - name: NEW - CHECKOUT 
+      - name: CHECKOUT 
         uses: actions/checkout@v2
         with:
+          ref: development
           persist-credentials: false
           fetch-depth: 0
-          ref: ${{ github.sha }}
-      
-      - name: NEW - PREVIOUS TAG
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-        id: previous-tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+ 
+      - name: CHANGE_LOG
+        id: change-log 
+        run: |
+          tag=$(git tag --sort=-committerdate | head -1)
+          prev=$(git tag --sort=-committerdate | head -2 | tail -1)
+          log=$(git log ${prev}..${tag} --oneline)
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+          echo "prev=$prev" >> $GITHUB_OUTPUT
+          echo "log<<EOF" >> $GITHUB_OUTPUT
+          echo "$log" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: ECHO THINGS
         run: |
           echo ${{github.ref}}
           echo ${{github.sha}}
-          echo ${{steps.previous-tag.outputs.tag}}
+          echo ${{steps.change-log.outputs.tag}}
+          echo ${{steps.change-log.outputs.prev}}
 
-      - name: NEW - PUSH TAG TO REMOTE 
+      - name: PUSH TAG TO REMOTE 
         uses: ad-m/github-push-action@master
         with:
           force: true
-          branch: "refs/tags/${{steps.previous-tag.outputs.tag}}"
+          branch: "refs/tags/${{steps.change-log.outputs.tag}}"
           github_token: ${{ secrets.ACCESS_TOKEN }}
           repository: ${{ env.CLIENT_REPO }}
 
-      - name: NEW - PUSH BRANCH REMOTE 
+      - name: PUSH BRANCH REMOTE 
         uses: ad-m/github-push-action@master
         with:
           force: true
-          branch: "refs/heads/${{steps.previous-tag.outputs.tag}}"
+          branch: "refs/heads/${{steps.change-log.outputs.tag}}"
           github_token: ${{ secrets.ACCESS_TOKEN }}
           repository: ${{ env.CLIENT_REPO }}
 
-
-      - name: NEW - OPEN PR
+      - name: OPEN PR
         uses: repo-sync/pull-request@v2
         with:
           github_token: ${{ secrets.ACCESS_TOKEN }}
-          source_branch: "refs/heads/${{ steps.previous-tag.outputs.tag }}"
+          source_branch: "refs/heads/${{ steps.change-log.outputs.tag }}"
           destination_branch: ${{ env.CLIENT_BRANCH }}
           destination_repository: ${{ env.CLIENT_REPO }}
-          pr_title: Release - ${{ steps.previous-tag.outputs.tag }} 
+          pr_title: "LI Release: ${{ steps.change-log.outputs.tag }}" 
           pr_body: |
-            # First PR From Landi-Argonauts
-             
-             - need to get other meta like:
-              - date
-              - author
-              - ${{ steps.previous-tag.outputs.tag }} 
-          pr_label: 'LANDI-RELEASE'
+            # LI Release: ${{ steps.change-log.outputs.tag }} 
+            
+            Changes in this Release:
+
+            ${{ steps.change-log.outputs.log}} 
+
+          pr_label: 'LI-RELEASE'
 
  #  curry_to_landi:
  #    runs-on: ubuntu-latest
