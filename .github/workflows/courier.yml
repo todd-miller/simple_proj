@@ -78,7 +78,7 @@ jobs:
             ${{ steps.change-log.outputs.log}} 
 
           pr_label: 'LI-RELEASE'
-
+      
  #  curry_to_landi:
  #    runs-on: ubuntu-latest
  #    if: github.repository == 'todd-miller/simple_proj' 
