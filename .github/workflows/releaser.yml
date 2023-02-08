@@ -36,11 +36,13 @@ jobs:
           prev_patch=$(echo $prev_version | cut -d. -f3)
 
           echo "tag=$tag" >> $GITHUB_OUTPUT
-          echo "is_patch=$tag_major == $prev_major && $tag_minor == $prev_minor ))" >> $GITHUB_OUTPUT
           echo "prev=$prev" >> $GITHUB_OUTPUT
           echo "log<<EOF" >> $GITHUB_OUTPUT
           echo "$log" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+          echo "is_patch=$tag_major == $prev_major && $tag_minor == $prev_minor ))" >> $GITHUB_OUTPUT
+          echo "tag_major=$tag_major" >> $GITHUB_OUTPUT
+          echo "tag_minor=$tag_minor" >> $GITHUB_OUTPUT
       
       - name: ECHO THINGS
         run: |
@@ -50,8 +52,12 @@ jobs:
           echo ${{steps.change-log.outputs.prev}}
           echo ${{steps.change-log.outputs.version_change}}
 
+      - name: Create Branch
+        if: ${{ github.repository == 'li-argonauts/simple_proj' }} 
+        run: echo "need to create a branch -> release/${{ steps.change-log.outputs.tag_major}}.${{steps.change-log.outputs.tag.minor}}.x"
+
       - name: Create Release
-        if: ${{ steps.change-log.outputs.is_patch == 1}} 
+        if: ${{ steps.change-log.outputs.is_patch == 1 && github.repository == 'li-argonauts/simple_proj'}} 
         uses: actions/create-release@v1
         env: 
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN}}
