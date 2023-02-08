@@ -52,11 +52,13 @@ jobs:
           echo ${{steps.change-log.outputs.prev}}
           echo ${{steps.change-log.outputs.is_patch}}
 
-      # - name: <DRAFT> CREATE BRANCH
-      #   if: ${{ steps.change-log.outputs.is_patch == 0 && github.repository == 'li-argonauts/simple_proj'}}
-      #   run: |
-      #     branch=$(echo "release/${{steps.change-log.outputs.major}}.{{steps.change-log.outputs.minor}}.x")
-      #     echo "create branch: $branch"
+      - name: Create Branch
+        if: ${{ steps.change-log.outputs.is_patch == 0 && github.repository == 'li-argonauts/simple_proj'}}
+        uses: ad-m/github-push-action@master
+        with:
+          force: true
+          branch: "refs/heads/${{steps.change-log.outputs.major}}.{{steps.change-log.outputs.minor}}.x"
+          github_token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Create Release
         if: ${{ steps.change-log.outputs.is_patch == 0}} 
@@ -70,4 +72,5 @@ jobs:
             Changes in this Release:
               ${{ steps.change-log.outputs.log}}
           draft: true 
+
 
