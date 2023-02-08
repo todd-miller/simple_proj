@@ -26,12 +26,12 @@ jobs:
           ref: development
           persist-credentials: false
  
-      - name: FIND TAGS 
-        id: tagger
-        uses: jimschubert/query-tag-action@v1
-        with:
-          include: 'v*'
-     
+     #  - name: FIND TAGS 
+     #    id: tagger
+     #    uses: jimschubert/query-tag-action@v1
+     #    with:
+     #      include: 'v*'
+
       - name: PREVIOUS TAG
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
         id: previous-tag
@@ -55,7 +55,6 @@ jobs:
           echo ${{github.ref}}
           echo ${{github.sha}}
           echo ${{steps.previous-tag.outputs.tag}}
-          echo ${{steps.tagger.outputs.tag}}
 
       - name: PUSH TAG TO REMOTE 
         uses: ad-m/github-push-action@master
