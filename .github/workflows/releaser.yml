@@ -51,13 +51,12 @@ jobs:
           echo ${{steps.change-log.outputs.tag}}
           echo ${{steps.change-log.outputs.prev}}
           echo ${{steps.change-log.outputs.is_patch}}
-          echo ${{steps.change-log.outputs.major}}.${{steps.change-log.outputs.minor}}.x
 
-      - name: <DRAFT> CREATE BRANCH
-        if: ${{ steps.change-log.outputs.is_patch == 0 && github.repository == 'li-argonauts/simple_proj'}}
-        run: |
-          branch=$(echo "release/${{steps.change-log.outputs.major}}.{{steps.change-log.outputs.minor}}.x")
-          echo "create branch: $branch"
+      # - name: <DRAFT> CREATE BRANCH
+      #   if: ${{ steps.change-log.outputs.is_patch == 0 && github.repository == 'li-argonauts/simple_proj'}}
+      #   run: |
+      #     branch=$(echo "release/${{steps.change-log.outputs.major}}.{{steps.change-log.outputs.minor}}.x")
+      #     echo "create branch: $branch"
 
       - name: Create Release
         if: ${{ steps.change-log.outputs.is_patch == 0}} 
