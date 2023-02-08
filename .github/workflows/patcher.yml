@@ -16,10 +16,24 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
+      - name: CHANGE_LOG
+        id: change-log 
+        run: |
+          all_tags=$(git tag --sort=-committerdate)
+          tag=$(git tag --sort=-committerdate | head -1)
+          echo "all_tags<<EOF" >> $GITHUB_OUTPUT
+          echo "$all_tags" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+
       - name: ECHO Stuff! 
         run: |
           echo $GITHUB_HEAD_REF
           echo $GITHUB_BASE_REF
+          echo ${{github.ref}}
+          echo ${{github.sha}}
+          echo ${{steps.change-log.outputs.tag}}
+          echo ${{steps.change-log.outputs.all_tags}}
 
       - name: Create Tag on Branch
         run: |
