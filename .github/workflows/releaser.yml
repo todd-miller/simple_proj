@@ -13,6 +13,10 @@ jobs:
     steps:
       - name: Checkout 
         uses: actions/checkout@v2
+        with:
+          ref: development
+          fetch-depth: 0
+          persist-credentials: false
       
       - name: CHANGE_LOG
         id: change-log 
@@ -25,6 +29,14 @@ jobs:
           echo "log<<EOF" >> $GITHUB_OUTPUT
           echo "$log" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: ECHO THINGS
+        run: |
+          echo ${{github.ref}}
+          echo ${{github.sha}}
+          echo ${{steps.change-log.outputs.tag}}
+          echo ${{steps.change-log.outputs.prev}}
+
 
       - name: Create Release
         uses: actions/create-release@v1
