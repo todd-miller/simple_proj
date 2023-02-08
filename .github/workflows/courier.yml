@@ -23,15 +23,13 @@ jobs:
       - name: CHECKOUT 
         uses: actions/checkout@v2
         with:
-          persist-credentials: false
-          ref: ${{ github.sha }}
+          ref: development
  
-      - name: Find Tag
+      - name: FIND TAGS 
         id: tagger
         uses: jimschubert/query-tag-action@v1
         with:
           include: 'v*'
-          commit-ish: 'HEAD~'
      
       - name: PREVIOUS TAG
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
