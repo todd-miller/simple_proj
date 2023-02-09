@@ -20,36 +20,14 @@ jobs:
       
       - name: CHANGE_LOG
         id: change-log 
-        run: |
-          tag=$(git tag --sort=-committerdate | head -1)
-          prev=$(git tag --sort=-committerdate | head -2 | tail -1)
-          log=$(git log ${prev}..${tag} --oneline)
+        uses: li-argonauts/gha-tag-parser@v0.3.0
 
-          tag_version=$(echo $tag | grep -o '[^-]*$')
-          tag_major=$(echo $tag_version | cut -d. -f1)
-          tag_minor=$(echo $tag_version | cut -d. -f2)
-          tag_patch=$(echo $tag_version | cut -d. -f3)
-          
-          prev_version=$(echo $prev | grep -o '[^-]*$')
-          prev_major=$(echo $prev_version | cut -d. -f1)
-          prev_minor=$(echo $prev_version | cut -d. -f2)
-          prev_patch=$(echo $prev_version | cut -d. -f3)
-
-          echo "is_patch=$(( $tag_major == $prev_major && $tag_minor == $prev_minor ))" >> $GITHUB_OUTPUT
-          echo "major=$tag_major" >> $GITHUB_OUTPUT
-          echo "minor=$tag_minor" >> $GITHUB_OUTPUT
-          echo "tag=$tag" >> $GITHUB_OUTPUT
-          echo "prev=$prev" >> $GITHUB_OUTPUT
-          echo "log<<EOF" >> $GITHUB_OUTPUT
-          echo "$log" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-      
       - name: ECHO THINGS
         run: |
           echo ${{github.ref}}
           echo ${{github.sha}}
-          echo ${{steps.change-log.outputs.tag}}
-          echo ${{steps.change-log.outputs.prev}}
+          echo ${{steps.change-log.outputs.latest_tag}}
+          echo ${{steps.change-log.outputs.prev_tag}}
           echo ${{steps.change-log.outputs.is_patch}}
 
       - name: Create Release
@@ -62,6 +40,8 @@ jobs:
           release_name: ${{ github.ref }}
           body: |
             Changes in this Release:
-              ${{ steps.change-log.outputs.log}}
+              ${{ steps.change-log.outputs.commit_log}}
+              
+            **Full Changelog**: https://github.com/${{ github.repository }}/compare/${{steps.tag-parser.outputs.prev_tag}}...${{steps.tag-parser.outputs.latest_tag}}
           draft: true 
 
