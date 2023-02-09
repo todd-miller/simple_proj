@@ -20,7 +20,7 @@ jobs:
       
       - name: CHANGE_LOG
         id: change-log 
-        uses: li-argonauts/gha-tag-parser@v0.3.0
+        uses: li-argonauts/gha-tag-parser@v0.4.0
 
       - name: ECHO THINGS
         run: |
@@ -40,7 +40,7 @@ jobs:
           release_name: ${{ github.ref }}
           body: |
             Changes in this Release:
-              ${{ steps.change-log.outputs.commit_log}}
+              ${{ steps.change-log.outputs.compare_log}}
               
             **Full Changelog**: https://github.com/${{ github.repository }}/compare/${{steps.tag-parser.outputs.prev_tag}}...${{steps.tag-parser.outputs.latest_tag}}
           draft: true 
