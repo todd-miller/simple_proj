@@ -1,0 +1,49 @@
+name: DEBUGGER 
+
+on: 
+  release:
+    types: [published]
+   
+jobs:
+  change-log:
+    runs-on: ubuntu-latest
+    outputs:
+      compare_log: ${{steps.tag-parser.outputs.compare_log}}
+      compare_url: ${{steps.tag-parser.outputs.compare_url}}
+
+      latest_tag: ${{steps.tag-parser.outputs.latest_tag}}
+      latest_major: ${{steps.tag-parser.outputs.latest_major}}
+      latest_minor: ${{steps.tag-parser.outputs.latest_minor}}
+      latest_patch: ${{steps.tag-parser.outputs.latest_patch}}
+      prev_tag: ${{steps.tag-parser.outputs.prev_tag}}
+      prev_major: ${{steps.tag-parser.outputs.prev_major}}
+      prev_minor: ${{steps.tag-parser.outputs.prev_minor}}
+      prev_patch: ${{steps.tag-parser.outputs.prev_patch}}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: TAG-PARSER
+        id: tag-parser
+        uses: li-argonauts/gha-tag-parser@v0.4.0
+
+      - name: LOG OUTPUT
+        run: |
+          echo "is_patch       --> ${{steps.tag-parser.outputs.is_patch}}"
+
+          echo "latest_tag     --> ${{steps.tag-parser.outputs.latest_tag}}"
+          echo "latest_major   --> ${{steps.tag-parser.outputs.latest_major}}"
+          echo "latest_minor   --> ${{steps.tag-parser.outputs.latest_minor}}"
+          echo "latest_patch   --> ${{steps.tag-parser.outputs.latest_patch}}"
+
+          echo "prev_tag       --> ${{steps.tag-parser.outputs.prev_tag}}"
+          echo "prev_major     --> ${{steps.tag-parser.outputs.prev_major}}"
+          echo "prev_minor     --> ${{steps.tag-parser.outputs.prev_minor}}"
+          echo "prev_patch     --> ${{steps.tag-parser.outputs.prev_patch}}"
+
+
+          echo "compare_url    --> ${{steps.tag-parser.outputs.compare_url}}"
+
+
