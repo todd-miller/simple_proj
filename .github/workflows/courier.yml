@@ -26,6 +26,7 @@ jobs:
       prev_major: ${{steps.version-parser.outputs.prev_major}}
       prev_minor: ${{steps.version-parser.outputs.prev_minor}}
       prev_patch: ${{steps.version-parser.outputs.prev_patch}}
+      release_branch: ${{steps.release-branch.outputs.release_branch}}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -35,6 +36,11 @@ jobs:
       - name: VERSION-PARSER
         id: version-parser
         uses: li-argonauts/gha-tag-parser@v0.4.0
+          
+      - name: GET_RELEASE_BRANCH_NAME 
+        id: release-branch
+        run: |
+          echo "release_branch=${{steps.version-parser.outputs.latest_major}}.${{steps.version-parser.outputs.latest_minor}}.x" >> $GITHUB_OUTPUT
 
   landi:
     runs-on: ubuntu-latest
@@ -46,20 +52,13 @@ jobs:
         with:
           ref: development
           persist-credentials: false
- 
-      - name: ECHO THINGS
-        run: |
-          echo ${{github.ref}}
-          echo ${{github.sha}}
-          echo ${{needs.change-log.outputs.latest_tag}}
-          echo ${{needs.change-log.outputs.prev_tag}}
-
+      
       - name: CREATE RELEASE BRANCH
         uses: ad-m/github-push-action@master
         if: ${{ needs.change-log.outputs.is_patch == 0 }}
         with:
           force: true
-          branch: "refs/heads/release/${{needs.change-log.outputs.latest_major}}.${{needs.change-log.outputs.latest_minor}}.x"
+          branch: "refs/heads/release/${{needs.change-log.outputs.release_branch}}"
           github_token: ${{ secrets.ACCESS_TOKEN }}
 
   landi-2-client:
@@ -72,6 +71,7 @@ jobs:
         with:
           ref: development
           persist-credentials: false
+          fetch-depth: 0
  
       - name: PUSH TAG TO REMOTE 
         uses: ad-m/github-push-action@master
