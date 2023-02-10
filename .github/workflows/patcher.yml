@@ -3,19 +3,19 @@
 name: PATCHER
 
 on:
-  push:
-    branches:
-      - 'release/**'
-  # pull_request:
+  # push:
   #   branches:
   #     - 'release/**'
-  #   types:
-  #     - closed
+  pull_request:
+    branches:
+      - 'release/**'
+    types:
+      - closed
 
 jobs:
   tag:
     runs-on: ubuntu-latest
-    # if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     steps:
       - uses: actions/checkout@v3
         with:
@@ -45,7 +45,7 @@ jobs:
   
   pr-into-dev:
     runs-on: ubuntu-latest
-    # if: github.event.pull-request.merged == true
+    if: github.event.pull-request.merged == true
     needs: [tag]
     steps:
       - uses: actions/checkout@v3
@@ -73,7 +73,7 @@ jobs:
   draft-release:
     runs-on: ubuntu-latest
     needs: [tag]
-    # if: github.event.pull-request.merged == true
+    if: github.event.pull-request.merged == true
     steps:
       - uses: actions/checkout@v3
         with:

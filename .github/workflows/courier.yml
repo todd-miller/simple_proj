@@ -71,6 +71,7 @@ jobs:
         with:
           ref: development
           persist-credentials: false
+          fetch-depth: 0
  
       - name: PUSH TAG TO REMOTE 
         uses: ad-m/github-push-action@master
